@@ -1,0 +1,495 @@
+% ---
+\documentclass{article}
+
+
+% Packages
+% ---
+\usepackage{amsmath,amssymb,amsthm} 	% Advanced math typesetting
+% \usepackage[utf8]{inputenc} 	% Unicode support (Umlauts etc.)
+\usepackage[USenglish]{babel} 	% Change hyphenation rules
+\usepackage{hyperref} 				% Add a link to your document
+\usepackage{graphicx}				% Add pictures to your document
+\graphicspath{ {./images/} }	% image directory
+\usepackage{listings} 				% Source code formatting and highlighting
+\lstset{basicstyle=\ttfamily}		%Typewriter font for code writing
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{float}
+%\floatstyle{boxed}
+\restylefloat{figure}
+\usepackage{mathabx}
+\usepackage{fancyhdr}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{scrextend}
+
+% Colors
+\definecolor{blu}{rgb}{0,0,1}
+\def\blu#1{{\color{blu}#1}}
+\definecolor{gre}{rgb}{0,.5,0}
+\def\gre#1{{\color{gre}#1}}
+\definecolor{red}{rgb}{1,0,0}
+\def\red#1{{\color{red}#1}}
+\def\norm#1{\|#1\|}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Def}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\bf CPSC 340 \\ Week 4 }
+\rhead{\bf Jeremi Do Dinh \\ 61985628}
+\rfoot{Page \thepage}
+
+
+
+\usepackage{tikz}						% Graph drawing tools
+\usetikzlibrary {positioning}
+
+\usepackage{breqn}
+\usepackage{multicol} 				% Multiple column functionality
+\usepackage{blindtext}
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+
+
+\begin{document}
+
+\noindent \url{https://www.cs.ubc.ca/~fwood/CS340/}
+
+\section*{Lecture IX}
+\textbf{January 27th, 2020}\\
+\url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L9.pdf}
+
+\subsection*{Shape of K-means clusters}
+K-means \gre{partitions the space} based on the “closest mean”:
+\centerfig{0.75}{Pic1}
+We observe that the clusters are convex regions\\ \\
+\textbf{Convex set:} A set is convex if line between two points in the set stays in the set.
+
+\subsubsection*{K-Means with non convex clusters}
+Example of non-convex banana-shaped data points:
+\centerfig{0.450}{Pic2}
+
+\subsection*{Density based clustering}
+This is a different approach for clustering where the clusters are \gre{defined by \textsl{dense} regions}. The examples in non-dense regions do not get clustered. \\ \\
+This means that the clusters can be \blu{non-convex}, and it is a \gre{non-parametric} clustering method (there is no fixed $ k $ value for the number of clusters). \\ \\
+The \textbf{Density based clustering} algorithm (DBSCAN) has two hyper-parameters:
+\begin{enumerate}
+	\item \blu{Epsilon $ \varepsilon $}, used to determine if another point is a neighbor:
+	\centerfig{0.4}{Pic3}
+	\item \blu{Min-neighbors}: \gre{number of neighbors} needed to say that a region is \textit{dense}. If you have at least \gre{minNeighbours} “neighbours”, you are called a “\blu{core}” point. 
+\end{enumerate}
+The main idea is to \gre{merge all neighboring core points to form clusters}:
+\centerfig{0.9}{Pic4} 
+
+\subsubsection*{Pseudo-code}
+\begin{lstlisting}[tabsize=3]
+	For each example x[i]:
+		if x[i] is already assigned to a cluster: 
+			do nothing
+		else:
+			Test whether x[i] is a core point.
+			if x[i] is not a core point:
+				do nothing
+			else:
+				make a new cluster
+				call the expand cluster_function
+\end{lstlisting}
+\textbf{The expand cluster function:}
+\begin{lstlisting}[tabsize=3]
+	Assign to this cluster all x[j] within distance 'eps' of core point xi
+	For each new core point found, call 'expand cluster' (recursively)
+\end{lstlisting}
+
+\subsubsection*{Density based clustering problems}
+\begin{itemize}
+	\item Some points are not assigned to a cluster. 
+	\begin{itemize}
+		\item Tis can be good or bad depending on the application
+	\end{itemize}
+	\item There is an ambiguity of non-core 'boundary' points. 
+	\item This method is \red{sensitive} to the choise of the $\varepsilon$ and \texttt{minNeighbors} arguments
+	\begin{itemize}
+		\item Original paper proposed an “elbow” method (see bonus slide).
+		\item Otherwise, \gre{not sensitive to initialization} (except for boundary points).
+	\end{itemize}
+\item If you get a new example, then \gre{finding a cluster is expensive}.
+\begin{itemize}
+	\item Need to compute distances to core points (or maybe all training points).
+\end{itemize}
+\item In high-dimensions, need a lot of points to ‘fill' the space.
+\end{itemize}
+
+\subsection*{Ensemble clustering}
+We can consider \blu{ensemble methods} for clustering: \textit{Consensus clustering}. \blu{Bootstrapping} is widely used, but we \red{need to be careful} about how we combine the models. \\ \\
+An example of this is running K-means 20 times, and then cluster using the mode of each $ \hat{y_i} $. Normally, averaging across models doing different things is good, but overall this is a bad ensemble method, specifically because of the label switching problem. This because:
+\begin{itemize}
+	\item The \blu{cluster labels $\hat{y_i}$ are meaningless}. 
+	\item We could get \gre{same clustering with permuted labels} (“exchangeable”):
+	\centerfig{0.75}{Pic5}
+	\item All $\hat{y_i}$ \gre{become equally likely} as number of initializations increases.
+\end{itemize}
+This problem is addressed using the following idea: ensembles can’t depend on label “meaning”:
+\begin{itemize}
+	\item Don’t ask “\red{is point $ x_i $ in red square cluster?}”, which is meaningless.
+	\item Ask “\gre{is point $ x_i $ in the same cluster as $ x_j $?}”, which is meaningful
+\end{itemize}
+
+\subsection*{Differing densities}
+Consider density-based clustering on this data:
+\centerfig{0.5}{Pic6}
+However, if we \gre{increase epsilon} and run it again, we get this:
+\centerfig{0.75}{Pic7}
+In this case there may not be an $\varepsilon$ value that gives you 3 distinct clusters. Examples exist, where this may be even worse. A solution to this is \textbf{Hierarchical Clustering}
+
+\subsection*{Hierarchical Clustering}
+This is a method that produces a \gre{tree of clusterings}. Each node in the tree splits the data into 2 or more clusters. This provides more information than using fixed clusters. Often, these have individual data points as leaves:
+\centerfig{0.8}{Pic8}
+\subsubsection*{Application: Phylogenetics}
+\textit{See slides}
+
+\subsubsection*{Agglomerative (bottom-up) clustering}
+This is the most common hierarchical method.
+\begin{enumerate}
+	\item Starts with \gre{each point in its own cluster}. 
+	\item Each step \gre{merges the two “closest” clusters}.
+	\centerfig{0.6}{Pic9}
+	\centerfig{0.6}{Pic10}
+	\centerfig{0.6}{Pic11}
+	\begin{center}
+		\dots \\
+		\dots
+	\end{center}
+	\centerfig{0.6}{Pic12}
+\end{enumerate}
+This method has been reinvented by different fields under different names(“UPGMA”). It also needs a \blu{"distance” between two clusters}, thus a standard choice is the distance between the means of the clusters (Not necessarily the best, many choices exist - \textit{bonus slide}). \\ \\
+\red{Cost is $ O(n^3d) $} for basic implementation. Each step costs $ O(n^2d) $, and each step might only cluster 1 new point
+\newpage
+
+\section*{Lecture X}
+\textbf{January 29th, 2020}
+\url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L10.pdf}
+
+\subsection*{Biclustering}
+\blu{Biclustering} is the process of \gre{clustering the training examples \textbf{and} the features}. Thus this also gives information about the relationship of the features. The most popular method is:
+\begin{itemize}
+	\item Run clustering method on $ X $ (examples).
+	\item Run clustering method on $ X^T $ (features).
+\end{itemize}
+This method is often plotted with $ X $ as a 'heatmap':
+\begin{itemize}
+	\item Where rows/columns are arranged by clusters.
+	\item This helps us ‘see’ why things are clustered
+\end{itemize}
+\centerfig{0.50}{Pic13}
+\textbf{Look at slides for significant applications fo the clustering methods.}
+
+\subsection*{Outlier Detection}
+The goal of outlier detection is to find observations that "unusually different" from the others. This is also known as "anomaly detection". We may be interested in removing the outliers, since they can skew the data, or actually be interested in the outliers themselves for security reasons. Outliers can occur for several reasons, some of which may be:
+\begin{multicols}{2}
+	\begin{itemize}
+	\item Measurement errors
+	\item Data entry errors
+	\item Contamination of data from other sources
+	\item Rare events
+\end{itemize}
+\end{multicols}
+Applications of outlier detection may include:
+\begin{itemize}
+	\item Datacleaning.
+	\item Security and fault detection (network intrusion, DOSattacks).
+	\item Fraud detection(credit cards, stocks, voting irregularities).
+	\item Detecting natural disasters (underwater earthquakes).
+	\item Astronomy (find new classes of stars/planets)
+	\item Genetics (finding individuals with new/ancient genes)
+\end{itemize}
+There are several classes of methods used for outlier detection:
+\begin{enumerate}
+	\item Model-based methods
+	\item Graphical approaches
+	\item Cluster-based methods
+	\item Distance-based methods
+	\item supervised-learning methods
+\end{enumerate}
+
+\textbf{But }before anything is done with regards to outlier detection, it is good practice to do a simple sanity check:
+\centerfig{0.6}{Pic14}
+We as our-self the following question:
+\begin{itemize}
+	\item Would any values in the column cause a Python/Julia \blu{“type” error}?
+	\item What is the \gre{range of numerical features}?
+	\item What are the \gre{unique entries for a categorical feature}?
+	\item Does it look like parts of the table are \gre{duplicated}?
+\end{itemize}
+These types of simple errors are VERY common in real data.
+
+\subsection*{Model-Based outlier detection}
+This method revolves around fitting a probabilistic model, and then we have that the outliers are the examples with low probability. For example:\\\\
+
+\begingroup
+\leftskip 2em
+\noindent \textbf{Example}\\ \\
+Let us assume that the data follows a standard normal distribution. Then the \blu{z-score} for the 1-D data is given by:
+\begin{align*}
+z_i &= \frac{x_i - \mu}{\sigma} \\
+\intertext{where:}
+\mu &= \frac{1}{n} \sum_{i = 1}^{n}x_i \\
+\sigma &= \sqrt{\frac{1}{n} \sum_{i = 1}^{n}(x_i-\mu)^2}
+\end{align*}
+We say that an example is an outlier if $ |z| > 4 $, or in other words, it is more than 4 standard deviations from the mean. 
+
+\endgroup
+
+\subsubsection*{Problems with Z-Score}
+Several problems occur with the Z-score. Norably, we have that \red{the mean and variance are sensitive to outliers}. A good fix for that would be to use quantiles, or to sequentially remove the worst outliers. \\
+Additionally, we have that the Z-score assumes that the data is "uni-modal", i.e.: that the data is centered around the mean. 
+
+\subsubsection*{Global vs. Local Outliers}
+Is the \red{red point} an outlier? What if we add the \blu{blue points}?
+\centerfig{0.5}{Pic15}
+In this case we have that the \red{red point} has the lowest z-score:
+\begin{itemize}
+	\item In the first case it is a global outlier
+	\item In the second case it is a local outlier (it is within the normal range of the data, but it is far from all the other data points)
+\end{itemize}
+Overall it is very difficult to properly define outliers. However we can have things such as \gre{\textbf{outlier groups}}, which are repeating patterns of outliers:
+\centerfig{0.8}{Pic16}
+
+\subsection*{Graphical Outlier detection}
+The \gre{\textbf{graphical approach}} to outlier detection consists of looking at a graph of the data, and have a \gre{human decide} whether a data point is an outlier. \\ \\
+
+\begingroup
+\leftskip 2em
+\noindent \textbf{Examples:}
+\begin{enumerate}
+	\item \textit{\textbf{Box-plot}}:
+\begin{itemize}
+	\item \blu{Visualization of quantiles/outliers}.
+	\item \red{Only 1 variable at a time}.
+\end{itemize}
+\centerfig{0.6}{Pic17}
+\item \textbf{\textit{Scatter-plot}}:
+\begin{itemize}
+	\item \blu{Can detect complex patterns}.
+	\item \red{Only 2 variables at a time}.
+\end{itemize}
+\centerfig{0.6}{Pic18}
+\item \textbf{\textit{Scatterplot array}}:
+\begin{itemize}
+	\item \blu{Look at all combinations of variables}. 
+	\item But laborious in high-dimensions.
+	\item \red{Still only 2 variables at a time}.
+\end{itemize}
+\centerfig{0.6}{Pic19}
+\item \textbf{\textit{Scatter-plot of 2-dimensional PCA}}
+\begin{itemize}
+	\item Details discussed later in the course. 
+\end{itemize}
+\end{enumerate}
+
+\endgroup
+
+\subsection*{Cluster-based outlier detection}
+This method detects outliers based on clustering:
+\begin{itemize}
+	\item We \gre{cluster the data}
+	\item \gre{Find points that don’t belong to clusters}
+\end{itemize}
+
+\begingroup
+\leftskip 2em
+\noindent \textbf{Examples:}
+\begin{enumerate}
+	\item \textbf{\textit{K-means}}:
+	\begin{itemize}
+		\item Find points that are far away from any mean.
+		\item Find clusters with a small number of points.
+	\end{itemize}
+\centerfig{0.6}{Pic20}
+\item \textbf{\textit{Density-based clustering}}:
+\begin{itemize}
+	\item \blu{Outliers are points not assigned} to cluster.
+\end{itemize}
+\centerfig{0.6}{Pic21}
+\item Hierarchical clustering:
+\begin{itemize}
+	\item \blu{Outliers take longer to join other groups}. 
+	\item Also good for \blu{outlier groups}.
+\end{itemize}
+\centerfig{0.6}{Pic22}
+\end{enumerate}
+\endgroup
+
+\subsection*{Distance-Based Outlier Detection}
+However, we have that most outlier detection techniques are \gre{based on distances}. For instance using \blu{\textbf{KNN outlier detection}}, for each point we compute the \gre{average distance to its \textbf{KNN}}. 
+\begin{itemize}
+	\item We choose points with biggest values (or values above a threshold) as outliers
+\end{itemize}
+
+
+\subsubsection*{Local Distance-Based Outlier Detection}
+As with density-based clustering, we encounter a problem with differing densities:
+\centerfig{0.5}{Pic23}
+In the above example, we have that the outlier $ o_2 $ has the same approximate density as the points in cluster $ C_1 $. Thus the basic ides around cluster-based models is to recognize that $ o_2 $ is \gre{\textbf{relatively far}} compared to its neighbors. \\ \\
+We therefore construct the \blu{outlierness ration} for a specific example $ i $:
+\begin{align*}
+\frac{\text{average distance of $ i $ to its KNNs}}{\text{average distance of neighbors of $ i $ to their KNNs}}
+\end{align*}
+We have that if $ \text{outlierness} > 1 $, $ x_i $ is further away from neighbours than expected. \\ \\
+\textit{Look at slides for more notes on \textbf{isolation forests} and problems with \textbf{Unsupervised Outlier Detection}}
+
+\subsection*{Supervised Outlier Detection}
+The final approach to outlier detection is to use \blu{supervised learning}:
+\begin{itemize}
+	\item $ y_i =1 $ if $ x_i $ is an outlier.
+	\item $ y_i =0 $ if $ x_i $ is a regular point.
+\end{itemize} 
+Here we can use out regular supervised learning models, and we can potentially find very complicated outlier patterns. However this methods needs supervision, which means that we need to know beforehand what an outlier looks like, and it may make it hard to detect 'new' types of outliers. 
+
+\subsection*{User-product Matrix}
+\textbf{Motivation: Product Recommendation} \\
+If a customer comes to out website looking to buy an item, we want to find \blu{similar items} that they migh also want to buy. This yields a \textbf{\textit{user-product matrix}}:
+\centerfig{0.8}{Pic24}
+
+\subsubsection*{Amazon Recommendation Method}
+This method used a User-product matrix as follows:
+\centerfig{0.4}{Pic25}
+This method returns the \gre{KNNs across the columns}:
+\begin{itemize}
+	\item We find the values of $ j $ that minimize $ \norm{x^i - x^j} $
+	\item The products bought by similar users. 
+\end{itemize}
+But first we have to divide each column by its norm, to normalize the vector. This is necessary to reflect if a product has been bought by a lot of users, or a few users. 
+
+
+
+\newpage
+\section*{Lecture XII}
+\textbf{January 31st, 2020}
+\url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L12.pdf}
+
+\subsection*{Supervised Learning Round II: Regression}
+Previously we have considered classification, which assumed that $ y_i $ was discrete. Now we will consider regression, where we allow $ y_i $ to be numerical. 
+
+\begingroup
+\leftskip 2em
+\subsubsection*{Example: Dependent vs. Explanatory variables}
+The goal for us is to discover the relationship between numerical variables:
+\begin{itemize}
+	\item Does number of lung cancer deaths change with number of cigarettes?
+	\item Does number of skin cancer deaths change with latitude?
+	\centerfig{0.85}{Pic26}
+	\item Do people in big cities walk faster?
+	\item Is the universe expanding or shrinking or staying the same size?
+	\centerfig{0.85}{Pic27}
+	\item Does number of gun deaths change with gun ownership?
+	\item Does number violent crimes change with violent video games?
+	\centerfig{0.90}{Pic28}
+\end{itemize}
+
+\endgroup
+\noindent Essentially, out goal is to discover a relationship between numerical variables. We must note that we're doing supervised learning, i.e.: we are trying to predict the value of 1 variable, instead of measuring the correlation between 2.  \\\\
+Supervised learning \red{does not give casualty}. (\textbf{Confused about this bit})
+
+\subsubsection*{Handling Numerical Labels}
+One way to handle numerical labels, is to \blu{discretize} them.
+\begin{itemize}
+	\item E.g., for ‘age’ could we use \{‘$ age \leq 20 $’, ‘$ 20 < age \leq 30 $’, ‘$ age > 30 $’\}.
+	\item This allows us to apply the methods of classification to do regression. 
+	\item \textbf{However:} But \textit{\red{coarse discretization}} loses resolution and \textit{\red{fine discretization}} requires lots of data.
+\end{itemize}
+There exist regression versions of classification methods such as Regression trees, probabilistic models, non-parametric models, however one of the oldest but still most popular methods in use is \blu{\textit{Linear regression based on squared error}}.
+
+\subsection*{Linear Regression in 1-D}
+In this case, we assume that we only have 1 feature ($ d=1 $). \textbf{\blu{Linear regression}} makes predictions $ \hat{y_i} $ using a \textbf{\blu{linear function}} of $ x_i $:
+\begin{align*}
+\hat{y_i} = wx_i
+\end{align*}
+The parameter $ w $ is referred to as the \blu{weight}, or \blu{regression coefficient} of $ x_i $. \\ \\
+As $ x_i $ changes, slope $ w $ affects the rate that $\hat{y_i}$ increases/decreases:
+\begin{itemize}
+	\item Positive $ w $: $\hat{y_i}$ increases as $ x_i $ increases.
+	\item Negative $ w $: $\hat{y_i}$ decreases as $ x_i $ increases.
+\end{itemize}
+	\centerfig{0.70}{Pic29}
+	
+\subsection*{Least Squares Objective}
+The \blu{linear model} is given by:
+\begin{align*}
+\hat{y_i} = wx_i
+\end{align*}
+Thus to make \blu{predictions} on a new example, we use:
+\begin{align*}
+\hat{y_i} = w\tilde{x_i}
+\end{align*}
+However it is \red{not possible to use the same error} as before, because it is \red{unlikely to find a line where $\hat{y_i} = y_i$ exactly} for many points. Thus the best model will be when \gre{$ |\hat{y_i} - y_i| $ is small}, but not exactly 0. \\ \\
+Consequently, instead of evaluating $ y_i $ exactly, we also evaluate the \gre{"size of the error"} in the prediction. And the classic way of doing so, is to set $ w $ such that we minimize the \blu{sum of squared errors}.
+\centerfig{0.80}{Pic31}
+\centerfig{0.80}{Pic32}
+	
+	
+\subsubsection*{Finding a $ w $ that minimizes the \blu{sum of squared errors}}
+We have the following derivation:
+\begin{align*}
+f(w) &= \frac{1}{2}\sum_{i = 1}^{n}(wx_i - y_i)^2 \\
+&= \frac{1}{2}\sum_{i = 1}^{n} \Big[w^2 x_i^2 - 2wx_iy_i + y_i^2\Big] \\
+&= \frac{w^2}{2} \underbrace{\sum_{i = 1}^{n}x_i^2 }_{\text{constant $ a $}} - w \underbrace{\sum_{i = 1}^{n} x_iy_i}_{\text{constant $ b $}} + \frac{1}{2} \underbrace{\sum_{i = 1}^{n}y_i^2}_{\text{constant $ c $}} \\
+&= \frac{w^2}{2}a - wb + \frac{1}{2}c
+\intertext{If we take the first derivative, we have that:}
+f'(w) &= wa - b + 0 \\
+\intertext{And thus setting $ f'(w) = 0 $, yields:}
+w &= \frac{b}{a} = \frac{\sum_{i = 1}^{n} x_iy_i}{\sum_{i = 1}^{n}x_i^2}
+\end{align*}
+This exists if we have a non zero feature. We then also have to check if we are actually minimizing, by seeing if the second derivative is negative:
+\begin{align*}
+f''(w) = a = \sum_{i = 1}^{n}x_i^2
+\end{align*}
+Since any squared value is positive, and we are considering a non zero feature, then we have that the second derivative is strictly positive. Thus \gre{$ f''(w) > 0 $ implies that the value found is a minimizer}. 
+
+\subsection*{Least-square in 2 Dimensions}
+
+\begingroup
+\leftskip 2em
+
+\textbf{Motivating example}
+
+
+\endgroup
+
+\subsubsection*{2D model}
+The linear model looks as follows:
+\begin{align*}
+\hat{y_i} = w_1x_{i1} + w_2x_{i_2}
+\end{align*}
+This defines a \gre{2-Dimensional Plane} \\
+
+\begingroup
+\leftskip 2em
+
+\noindent \textbf{Notation}\\
+If we have $ d $ features, then the \blu{$ d $-dimensional model} is:
+\begin{align*}
+\hat{y_i} = w_1x_{i1} + w_2x_{i_2} + w_3x_{i_3} + \dots + w_dx_{i_d}
+\end{align*}
+In words, our \blu{model is that the output is a weighted sum of the inputs}.
+We can re-write this in summation notation:
+\begin{align*}
+\hat{y_i} &= \sum_{j = 1}^{d}w_jx_{ij} \\
+\intertext{Or in vector notation:}
+\hat{y_i} &=w^Tx_i
+\end{align*}
+Here we assume that $ w$ and $ x_i $ are column vectors. 
+
+\endgroup
+
+
+\subsection*{Least squares in $ d $-dimensions}
+In $ d $-dimensions we try to minimize the following function of a vector $ w $:
+\begin{align*}
+f(w) &= \frac{1}{2}\sum_{i = 1}^{n}(w^Tx_i - y_i)^2
+\end{align*}
+\centerfig{0.80}{Pic33}
+
+
+
+\end{document}

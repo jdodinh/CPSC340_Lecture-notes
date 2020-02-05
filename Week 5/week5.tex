@@ -1,0 +1,117 @@
+% ---
+\documentclass{article}
+
+
+% Packages
+% ---
+\usepackage{amsmath,amssymb,amsthm} 	% Advanced math typesetting
+% \usepackage[utf8]{inputenc} 	% Unicode support (Umlauts etc.)
+\usepackage[USenglish]{babel} 	% Change hyphenation rules
+\usepackage{hyperref} 				% Add a link to your document
+\usepackage{graphicx}				% Add pictures to your document
+\graphicspath{ {./images/} }	% image directory
+\usepackage{listings} 				% Source code formatting and highlighting
+\lstset{basicstyle=\ttfamily}		%Typewriter font for code writing
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{float}
+%\floatstyle{boxed}
+\restylefloat{figure}
+\usepackage{mathabx}
+\usepackage{fancyhdr}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{scrextend}
+
+% Colors
+\definecolor{blu}{rgb}{0,0,1}
+\def\blu#1{{\color{blu}#1}}
+\definecolor{gre}{rgb}{0,.5,0}
+\def\gre#1{{\color{gre}#1}}
+\definecolor{red}{rgb}{1,0,0}
+\def\red#1{{\color{red}#1}}
+\def\norm#1{\|#1\|}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Def}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\bf CPSC 340 \\ Week 5 }
+\rhead{\bf Jeremi Do Dinh \\ 61985628}
+\rfoot{Page \thepage}
+
+
+
+\usepackage{tikz}						% Graph drawing tools
+\usetikzlibrary {positioning}
+
+\usepackage{breqn}
+\usepackage{multicol} 				% Multiple column functionality
+\usepackage{blindtext}
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+
+
+\begin{document}
+
+\noindent \url{https://www.cs.ubc.ca/~fwood/CS340/}
+
+\section*{Lecture XIII}
+\textbf{February 3rd, 2020} \\
+\url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L13.pdf}
+
+\subsection*{Normal Equations}
+To find the normal equations, we \gre{set the gradient equal to 0}, to find the critical points:
+\begin{align*}
+	X^TXw - X^Ty &= 0 \\
+	\intertext{We now move the terms not involving $ w $ to the other side:}
+	X^TXw &= X^Ty
+\end{align*} 
+This is a set of $ d $ linear equations, called the \blu{normal equations}. In \blu{Python} we sole linear equations in one line, using \texttt{numpy.linalg.solve}.
+
+\subsection*{Least squares cost}
+We investigate the cost of solving normal equations $ X^TXw = X^Ty $:
+\begin{itemize}
+	\item Forming $ X^Ty $ vectors costs $ O(nd) $
+	\begin{itemize}
+		\item It has $ d $ elements, and each is an inner product between $ n $ numbers.
+	\end{itemize}
+\item Forming the matrix $ X^TX $ costs \red{$ O(nd^2) $}
+\begin{itemize}
+	\item It has $ d^2 $ elements, and each is an inner product between $ n $ numbers.
+\end{itemize}
+\item Solving a $ d \times d $ system of equations costs \red{$ O(d^3) $}
+\begin{itemize}
+	\item Cost of Gaussian elimination on a d-variable linear system.
+	\item Other standard methods have the same cost
+\end{itemize}
+\item Therefore the overall cost is $ \blu{O(nd^2 + d^3)} $.
+\begin{itemize}
+	\item The dominating term depends on $ n $ and $ d $
+\end{itemize}
+\end{itemize}
+
+\subsection*{Least squares issues}
+\begin{itemize}
+	\item Solution \red{might not be unique}.
+	\item It is \red{sensitive to outliers}.
+	\item It always \red{uses all features}.
+	\item Data can might so big we \red{can’t store $ X^TX $}.
+	\begin{itemize}
+		\item Or you can’t afford the $ O(nd^2 + d^3) $ cost.
+	\end{itemize}
+	\item It might \red{predict outside range} of yi values.
+	\item It assumes a \red{linear relationship} between xi and yi.
+\end{itemize}
+ \subsection*{Non-Uniqueness of Least Squares Solution}
+Why isn't the solution unique?
+\begin{itemize}
+	\item We investigate the case where we have \gre{two features that are identical} for \textit{all} examples. 
+	\item We can increase weight on one feature, and decrease it on the other, \red{without changing predictions}.
+	\centerfig{0.6}{Pic1}
+	\item Thus, if $ (w_1,w_2) $ is a solution then $ (w_1+w_2, 0) $ is another solution.
+	\item This is special case of features being \blu{collinear}:
+\end{itemize}
+But any $ w $ where $ \nabla f(w)=0 $ is a global minimizer of $ f $.
+
+\end{document}
