@@ -1,0 +1,296 @@
+% ---
+\documentclass{article}
+
+
+% Packages
+% ---
+\usepackage{amsmath,amssymb,amsthm} 	% Advanced math typesetting
+% \usepackage[utf8]{inputenc} 	% Unicode support (Umlauts etc.)
+\usepackage[USenglish]{babel} 	% Change hyphenation rules
+\usepackage{hyperref} 				% Add a link to your document
+\usepackage{graphicx}				% Add pictures to your document
+\graphicspath{ {./images/} }	% image directory
+\usepackage{listings} 				% Source code formatting and highlighting
+\lstset{basicstyle=\ttfamily}		%Typewriter font for code writing
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{float}
+%\floatstyle{boxed}
+\restylefloat{figure}
+\usepackage{mathabx}
+\usepackage{fancyhdr}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{scrextend}
+
+% Colors
+\definecolor{blu}{rgb}{0,0,1}
+\def\blu#1{{\color{blu}#1}}
+\definecolor{gre}{rgb}{0,.5,0}
+\def\gre#1{{\color{gre}#1}}
+\definecolor{red}{rgb}{1,0,0}
+\def\red#1{{\color{red}#1}}
+\def\norm#1{\|#1\|}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Def}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\bf CPSC 340 \\ Week 5 }
+\rhead{\bf Jeremi Do Dinh \\ 61985628}
+\rfoot{Page \thepage}
+
+
+
+\usepackage{tikz}						% Graph drawing tools
+\usetikzlibrary {positioning}
+
+\usepackage{breqn}
+\usepackage{multicol} 				% Multiple column functionality
+\usepackage{blindtext}
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+
+
+\begin{document}
+
+\noindent \url{https://www.cs.ubc.ca/~fwood/CS340/}
+
+\section*{Lecture XVI - Feature selection}
+\textbf{February 10th, 2020} \\
+\url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L16.pdf}
+
+\subsection*{Feature Selection}
+To discuss feature selection we recall the motivating example for decision tree: The food allergy example. 
+
+\centerfig{0.75}{food-allergies}
+Here instead of predicting "sick" we want to do feature selection. This means that we want to discover \blu{which foods are "relevant" in predicting \textit{sick}}. \\ \\
+The general feature selection problem is outlined as follows:
+\centerfig{0.50}{feature-sel1}
+\textbf{\gre{Find the features (colkumns) of $ X $ that are important in predicting $ y $}}
+\begin{itemize}
+	\item “What are the relevant factors?”
+	\item “Which basis functions should I use among these choices?”
+	\item “What types of new data should I collect?”
+	\item “How can I speed up computation?”
+\end{itemize}
+This is one of the most important problems in ML/statistics, but it is very messy:
+\begin{itemize}
+	\item For now, we’ll say a feature is “relevant” if it helps \blu{predict $ y_i $ from $ x_i $}.
+\end{itemize}
+
+\subsection*{"Association" Approach}
+A simple/common way to do feature selection is the following:
+\begin{itemize}
+	\item For each feature ‘j’, compute correlation between feature values $ x_j $ and $ y $. We say that $ j $ is relevant if correlation is above $ 0.9 $ or below $ -0.9 $.
+	\item This turns feature selection into hypothesis testing for each feature.
+\end{itemize}
+However this usually gives unsatisfactory results as it \red{ignores variable interactions}: 
+\begin{itemize}
+	\item \red{Includes irrelevant variables}: “Taco Tuesdays”.
+\begin{itemize}
+	\item If tacos make you sick, and you often eat tacos on Tuesdays, it will say “Tuesday” is relevant. 
+\end{itemize}
+\item \red{Excludes relevant variables}: “Diet Coke + Mentos Eruption”.
+\begin{itemize}
+	\item Diet coke and Mentos don’t make you sick on their own, but \textit{together} they make you sick.
+\end{itemize}
+\end{itemize}
+
+\subsection*{"Regression Weight" Approach}
+This is a simple and common approach to feature selection. We :
+\begin{itemize}
+	\item \blu{Fit regression weights $ w $ based on all features }(maybe with least squares).
+	\item Take all features $ j $ where \blu{weight $ |w_j| $ is greater than a threshold.}
+\end{itemize}
+For example if you fit a least squares model with 5 features and get:
+\begin{align*}
+w &= \begin{bmatrix}
+0.01 \\ -0.2 \\ 10 \\ -3 \\ 0.0001
+\end{bmatrix}
+\end{align*}
+We observe that:
+\begin{itemize}[label = -]
+	\item Feature 3 looks the most relevant. 
+	\item Feature 4 also looks relevant.
+	\item Feature 5 seems irrelevant.
+\end{itemize}
+This could:
+\begin{itemize}
+	\item Recognize that “Tuesday” is irrelevant.
+	\begin{itemize}
+		\item If you get enough data, and you sometimes eat tacos on other days. (And the relationship is actually linear.)
+	\end{itemize}
+	\item Recognize that “Diet Coke” and “Mentos” are relevant. 
+	\begin{itemize}
+		\item Assuming this combination occurs enough times in the data.
+	\end{itemize}
+\end{itemize}
+\textbf{However:} this problem has \red{major problems with collinearity}:
+\begin{itemize}
+	\item If the “Tuesday” variable always equals the “taco” variable, it \red{could say that Tuesdays are relevant but tacos are not.} 
+	\centerfig{0.75}{reg-weight-1}
+	\item If you have two copies of an irrelevant feature, \red{it could take both irrelevant copies}.
+		\centerfig{0.9}{reg-weight-2}
+\end{itemize}
+
+\subsection*{Search and Score Methods}
+The most common feature selection method is \blu{search and score}. It focuses around:
+\begin{enumerate}
+	\item Define \blu{score function $ f(S) $} that measures quality of a set of features $ S $.
+	\item Now \blu{search} for the variables $ S $ with the best score
+\end{enumerate}
+Example with 3 features:
+\begin{itemize} [label = -]
+	
+	\item Compute “score” of using feature $ 1 $. 
+	\item Compute “score” of using feature $ 2 $. 
+	\item Compute “score” of using feature $ 3 $. 
+	\item Compute “score” of using features $ \{1,2\} $. 
+	\item Compute “score” of using features $ \{2,3\} $.
+	\item Compute “score” of using features $ \{1,3\} $.
+	\item Compute “score” of using features $ \{1,2, 3\} $.
+	\item Compute “score” of using feature $ \{ \} $
+	\item Return the set of features $ S $ with the best “score”.
+\end{itemize}
+
+\subsubsection*{Which Score function?}
+Firstly, the \red{score can’t be the training error}:
+\begin{itemize}[label = -]
+	\item because training error goes down as you add features, so will \red{select all features}.
+\end{itemize}
+Therefore a more logical score function would be the \blu{validation error}. 
+\begin{itemize}[label = -]
+	\item “\gre{Find the set of features that gives the lowest validation error.}” 
+	\item To minimize test error, this is what we want.
+\end{itemize}
+However there are problems due to the large \red{number of sets of variables}:
+\begin{itemize}[label = -]
+	\item If we have $ d $ variables, there are \red{$ 2^d $ sets} of variables.
+	\item \red{Optimization bias} is high: we’re optimizing over $ 2^d $ models (not 10).
+	\item Prone to \red{false positives}: irrelevant variables will sometimes help by chance.
+\end{itemize}
+
+\subsubsection*{Number of Features” Penalties}
+To reduce false positives, we can again use complexity penalties:
+\centerfig{0.75}{comp-pen-1}
+\begin{itemize}[label = -]
+	\item E.g., we could use squared error and number of non-zeroes. 
+	\item We’re using $ x_{iS} $ as the features $ S $ of example $ x_i $.
+\end{itemize}
+Here we have that if two $ S $ have similar error, this prefers the smaller set:
+\begin{itemize}[label=-]
+	\item It prefers removing feature 3 instead of having $ w_3 = 0.00001 $.
+\end{itemize}
+Instead of “size(S)”, we usually write this using the “L0-norm”
+
+\subsubsection*{L0-Norm and “Number of Features We Use”}
+In linear models, \red{setting $ w_j = 0 $ is the same as removing feature $ j $}:
+\centerfig{0.65}{L0-norm-1}
+The L0-Norm is the number of non-zero values ($ \norm{w}_0 = \text{size}(S) $)
+
+
+\subsubsection*{L0-penalty: optimization}
+L0-norm penalty for feature selection is:
+\centerfig{0.5}{L0-norm-2}
+Suppose we want to use this to evaluate the features $ S=\{1,2\} $: 
+\begin{itemize}
+	\item First fit the $ w $ just using features 1 and 2.
+	\item Now compute the training error with this $ w $ and features 1 and 2. 
+	\item Add $ 2 \lambda $ to the training error to get the score.
+\end{itemize}
+We repeat this with other choices of $ S $ to find the best features. \\ \\
+The above equation balances between training error and number of features we use.:
+\begin{itemize}
+	\item With $ \lambda=0 $, we get least squares with all features.
+	\item With $ \lambda = \inf $, we must set $ w=0 $ and not use any features.
+	\item With other $\lambda$, balances between training error and number of non-zeroes.
+	\begin{itemize}
+		\item Larger $\lambda$ puts more emphasis on having zeroes in $ w $ (more features removed).
+		\item Different values give AIC, BIC, and so on.
+	\end{itemize}
+\end{itemize}
+\subsection*{Forward Selection (Greedy Search Heuristic)}
+In search and score, it’s also just \red{hard to search for the best $ S $}, since there are \red{$ 2^d $ possible sets}. \\ \\
+A common greedy approach is \textbf{\blu{forward selection}}:
+\begin{enumerate}
+	\item \gre{Compute score if we use \underline{no} features}
+	\item \gre{Try adding "$ taco $", "$ milk $", "$ egg $", and so on (computing score for each)}
+	\item Add "$ milk $" because it got the best score. 
+	\item \gre{Try $ \{milk, taco\} $, $ \{milk, egg\} $ and so on, computing \underline{score} of each variable \underline{with $ milk $}}
+	\item Add "$ egg $" because it got the best score combined with "$ milk $"
+	\item \gre{Try $ \{milk, egg, taco\} $, $ \{milk, egg, pizza\} $}
+\end{enumerate}
+Formally, the \blu{forward selection} search algorithm is as follows:
+\begin{enumerate}
+	\item Start with an \gre{empty set} of features, $ S = [\quad] $.
+	\item For each possible feature $ j $
+	\begin{itemize}[label=-]
+		\item \gre{Compute the scores of features in $ S $ combined with feature $ j $}
+	\end{itemize}
+	\item Find the $ j $ that has the highest score when added to $ S $.
+	\item Check if {$S \cup j$} improves on the best score found so far.
+	\item Add $ j $ to $ S $ and go back to Step 2.
+	\begin{itemize}[label=-]
+		\item A variation is to \red{stop if no $ j $ improves the score} over just using $ S $.
+	\end{itemize}
+\end{enumerate}
+This method is \red{not guaranteed to find the best set}, \gre{but reduces many problems}:
+\begin{itemize}
+	\item Considers $ O(d^2) $ models: cheaper, overfits less, has fewer false positives
+\end{itemize}
+
+\subsection*{In summary}
+We set out to choose the relevant features:
+\centerfig{0.4}{summ-1}
+The most common approach is \blu{search and score}:
+\begin{itemize}
+	\item Define “score” and “search” for features with best score.
+\end{itemize}
+But it’s \red{hard to define the “score” and it’s hard to “search”}. 
+\begin{itemize}
+	\item So we often use greedy methods like \blu{forward selection}.
+\end{itemize}
+Methods work ok on “toy” data, but are \red{frustrating on real data}. 
+\begin{itemize}
+	\item Different methods may return very different results.
+	\item Defining whether a feature is “relevant” is complicated and ambiguous.
+\end{itemize}
+The Advice is choosing the relevant variables is:
+\begin{itemize}
+	\item Try the association approach.
+	\item Try forward selection with different values of $\lambda$.
+	\item Try out a few other feature selection methods too.
+\end{itemize}
+\textbf{Then:}
+\begin{itemize}
+	\item \gre{\textbf{Discuss the results}} with the domain expert.
+	\begin{itemize}
+		\item They probably have an idea of why some variables might be relevant.
+	\end{itemize}
+\item \red{\textbf{Don’t be over confident}}
+\begin{itemize}
+	\item These methods are probably not discovering how the world truly works.
+	\item “The algorithm has found that these variables are helpful in predicting yi.” 
+	\begin{itemize}
+		\item Then a warning that these models are not perfect at finding relevant variables.
+	\end{itemize}
+\end{itemize}
+\end{itemize}
+\newpage
+
+\section*{Lecture XVII - Regularization}
+\textbf{February 12th, 2020} \\
+\url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L17.pdf}
+
+\subsection*{“Feature” Selection vs. “Model” Selection?}
+\blu{\textbf{Model selection}}: “which model should I use?”
+\begin{itemize}
+	\item KNN vs. decision tree, depth of decision tree, \gre{degree of polynomial basis}. 
+\end{itemize}
+\blu{\textbf{Feature selection}}:“which features should I use?”
+\begin{itemize}
+	\item Using feature 10 or not, \gre{using $ x_i^2 $ as part of basis}.
+\end{itemize}
+
+\end{document}
