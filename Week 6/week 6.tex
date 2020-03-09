@@ -293,6 +293,114 @@ The Advice is choosing the relevant variables is:
 	\item Using feature 10 or not, \gre{using $ x_i^2 $ as part of basis}.
 \end{itemize}
 These two tasks are \gre{\textbf{highly-related}}:
+\begin{itemize}
+	\item It’s a different “model” if we add $ x_i^2 $ to linear regression.
+	\item But the $ x_i^2 $ term is just a “feature” that could be “selected” or not.
+	\item Usually, “feature selection” means choosing from some “original” features. 
+	\begin{itemize}
+		\item You could say that “feature” selection is a special case of “model” selection.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection*{Can it help prediction to throw features away?}
+Yes, because \red{linear regression can over-fit} with large $ d $ (Even though it’s “just” a hyper-plane.) \\ \\
+Consider using $ d = n $, with completely random features. 
+\begin{itemize}
+	\item With high probability, you will be able to \red{get a training error of 0}. 
+	\item But the features were random, this is \red{completely overfitting}.
+\end{itemize}
+You could view \gre{“number of features” as a hyper-parameter}:
+\begin{itemize}
+	\item Model gets more complex as you add more features.
+\end{itemize}
+
+
+\subsection*{Controlling Complexity}
+We’ve said that \red{complicated models tend to overfit more}. But what if we need a complicated model? \\ \\
+Usually \red{“true” mapping from $ x_i $ to $ y_i $ is complex.}
+\begin{itemize}
+	\item Might need high-degree polynomial.
+	\item Might need to combine many features, and don’t know “relevant” ones
+\end{itemize}
+But complex models can overfit, so what do we do??? \\ \\
+Our main tools are:
+\begin{enumerate}
+	\item \blu{\textbf{Model averaging}}: average over multiple models to decrease variance
+	\item \blu{\textbf{Regularization}}: add a \gre{penalty on the complexity} of the model.
+\end{enumerate}
+\subsubsection*{Consider the following dataset and 3 linear regression models:}
+\centerfig{0.5}{comp-pen-2}
+Which line should we choose? \\ \\
+If we are forced to choose betweed \red{red} and \gre{green} assuming they have the same training error, we \textbf{\gre{should pick green}}
+\begin{itemize}
+	\item Since slope is smaller, \gre{small change in $ x_i $ has a smaller change in prediction $ y_i $}.
+	\begin{itemize}
+		\item Green line’s predictions are \gre{less sensitive to having $ w $ exactly right}.
+	\end{itemize}
+	\item Since green $ w $ is less sensitive to data, test error might be lower.
+\end{itemize}
+ \subsection*{L2-regularization}
+ 
+\subsubsection*{Motivation}
+
+The standard strategy for \blu{regularization} is \blu{L2-regularization}. 
+\centerfig{0.75}{L2-reg-1}
+The intuition is that \red{large slopes $ w_j $} tend to lead to overfitting. Consequently the objective \gre{balances getting low error vs. having small slopes} $ w_j $:
+\begin{itemize}
+	\item “You can increase the training error if it makes ‘w’ much smaller.”
+	\item This nearly-always reduces overfitting.
+	\item The regularization parameter $\lambda > 0$ controls “strength” of regularization. 
+	\begin{itemize}
+		\item Large $\lambda$ puts large penalty on slopes.
+	\end{itemize}
+\end{itemize}
+In terms of the fundamental trade-off:
+\begin{itemize}
+	\item Regularization \red{increases training error}.
+	\item Regularization \gre{decreases approximation error}.
+\end{itemize}
+Therefore now the question is: How do we choose $\lambda$?
+\begin{itemize}
+	\item Theory: as $ n $ grows $\lambda$ should be in the range $ O(1) $ to $ (\sqrt{n}) $.
+	\item Practice: optimize \blu{validation set} or \blu{cross-validation error}
+	\begin{itemize}
+		\item \gre{This almost always decreases the test error.}
+	\end{itemize}
+\end{itemize}
+\subsubsection*{L2-Regularization “Shrinking” Example}
+Solution to a “\blu{least squares with L2-regularization}” for \gre{different $\lambda$}:
+\centerfig{0.9}{L2-reg-ex1}
+We obtain \gre{least squares when $\lambda = 0$}, but we can achieve similar training error with smaller $ \norm{w} $ \\ \\
+$ \norm{Xw –y} $ increases with $\lambda$, and $ \norm{w} $ decreases with $\lambda$.
+\begin{itemize}
+	\item Though individual $ w_j $ can increase or decrease with lambda.
+	\item Because we use the L2-norm, the large ones decrease the most.
+\end{itemize}
+
+\subsubsection*{Regularization Path}
+Regularization path is a plot of the optimal weights $ w_j $ as $\lambda$ varies.
+\centerfig{0.5}{Reg-path}
+Starts with least squares with $\lambda= 0$, and $ w_j $ converge to 0 as $\lambda$ grows.
+
+\subsection*{L2-regularization and the normal equations}
+
+When using the L2-regularized squared error, we can solve for $ \nabla f(w) = 0 $. We have that:
+\begin{itemize}
+	\item Loss before: $ f(w) = \frac{1}{2} \norm{Xw-y}^2 $
+	\item Loss after: $ f(w) = \frac{1}{2} \norm{Xw-y}^2 + \frac{\lambda}{2} \norm{w}^2$
+\end{itemize}
+We also have that:
+\begin{itemize}
+	\item Gradient before: $ \nabla f(w) = X^T X w - X^Ty $
+	\item Gradient after: $ \nabla f(w) = X^T X w - X^Ty + \lambda w$
+\end{itemize}
+And:
+\begin{itemize}
+	\item Linear system before: $ X^TXw = X^Ty $
+	\item Linear system after: $ (X^TX + \lambda I )w = X^Ty $
+\end{itemize}
+But unlike $ X^TX $, the matrix $ (X^TX+ \lambda I) $ is always invertible. Then we multiply by its inverse to get $ w = (X^TX + \lambda I )^{-1} (X^Ty) $
+
 
 
 \end{document}
