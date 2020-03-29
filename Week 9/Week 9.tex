@@ -1,0 +1,178 @@
+% ---
+\documentclass{article}
+
+
+% Packages
+% ---
+\usepackage{amsmath,amssymb,amsthm} 	% Advanced math typesetting
+% \usepackage[utf8]{inputenc} 	% Unicode support (Umlauts etc.)
+\usepackage[USenglish]{babel} 	% Change hyphenation rules
+\usepackage{hyperref} 				% Add a link to your document
+\usepackage{graphicx}				% Add pictures to your document
+\graphicspath{ {./images/} }	% image directory
+
+% Typewriter settings for code
+\usepackage{listings} 				% Source code formatting and highlighting
+\lstset{basicstyle=\ttfamily}		%Typewriter font for code writing
+
+
+\usepackage{enumitem}
+
+% Margins
+\usepackage{geometry}
+\geometry{margin=1in}
+
+
+\usepackage{float}
+\restylefloat{figure}
+\usepackage{mathabx}
+\usepackage{fancyhdr}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{scrextend}
+
+% Siderules for digressions/examples
+\usepackage{mdframed}
+\newmdenv[
+topline=false,
+bottomline=false,
+skipabove=\topsep,
+skipbelow=\topsep
+]{siderules}
+
+% Colors
+\definecolor{blu}{rgb}{0,0,1}
+\def\blu#1{{\color{blu}#1}}
+\definecolor{gre}{rgb}{0,.5,0}
+\def\gre#1{{\color{gre}#1}}
+\definecolor{red}{rgb}{1,0,0}
+\def\red#1{{\color{red}#1}}
+\def\norm#1{\|#1\|}
+
+
+% Headers
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\bf CPSC 340 \\ Week 9 }
+\rhead{\bf Jeremi Do Dinh \\ 61985628}
+\rfoot{Page \thepage}
+
+% Graph drawing tools
+\usepackage{tikz}						
+\usetikzlibrary {positioning}
+
+\usepackage{breqn}
+\usepackage{multicol} 				% Multiple column functionality
+\usepackage{blindtext}
+
+% Figure shortcut
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+
+
+\begin{document}
+
+\noindent \url{https://www.cs.ubc.ca/~fwood/CS340/}
+
+\section*{Lecture XXV - Boosting}
+\noindent \url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L25.pdf}
+
+\newpage
+\section*{Lecture XXVI - MLE and MAP}
+\noindent \url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L26.pdf}
+
+
+\newpage
+\section*{Lecture XXVII - Principal Component Analysis}
+\noindent \url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L27.pdf}
+
+\subsection*{Part 4: Latent-Factor Models}
+\gre{"Part weights" are a change of basis} from $ x_i $ to some $ z_i $. But in high dimensions \red{it may be hard to find a basis}....\\
+\\
+Part 4 is about \blu{learning the basis from the data}. 
+\centerfig{0.4}{lat-fac-1}
+Why?
+\begin{itemize}
+	\item \blu{Supervised learning}: We could use the part weights as our features
+	\item \blu{Outlier detection}: it may be an outlier if it is not a combination of the usual parts
+	\item \blu{Dimension reduction}: compress the data into a limited number of part weights
+	\item \blu{Visualization}: if we have only 2 part weights, we can view the data as a scatter plot
+	\item \blu{Interpretation}: we can try and figure out what the “parts” represent.
+\end{itemize}
+
+\begin{siderules}
+	\textbf{Recall} using \blu{$ k $-means for vector quantization}
+	\begin{itemize}[label=-]
+		\item Run $ k $-means to find a set of “means” $ w_c $.
+		\item This gives a cluster $ \hat{y}_i $ for each object $ i $.
+		\item Replace features $ x_i $ by mean of cluster: $ \hat{x}_i \approx w_{\hat{y}_i} $
+	\end{itemize}
+\centerfig{0.8}{lat-fac-2}
+This \gre{can be viewed as a (very bad) latent-factor model}.
+	\end{siderules}
+
+\subsection*{Vector Quantization (VQ) as Latent-Factor Model}
+When $ d = 3 $, we could write $ x_i $ exactly as:
+\begin{align*}
+x_i &= z_{i1}  \underbrace{\begin{bmatrix}
+1 \\0\\0
+\end{bmatrix}}_{\text{"part 1"}} + 
+z_{i2}  \underbrace{\begin{bmatrix}
+0 \\1\\0
+\end{bmatrix}}_{\text{"part 2"}} +
+z_{i3}  \underbrace{\begin{bmatrix}
+0 \\0\\1
+\end{bmatrix}}_{\text{"part 3"}}
+\end{align*}
+In this “pointless” latent-factor model we have $ z_i = \begin{bmatrix}
+x_{i1} \\ x_{i2} \\ x_{i3} 
+\end{bmatrix}$.
+If $ x_i $ is in cluster 2, VQ approximates $ x_i $ by mean $ w_2 $ of cluster 2:
+\begin{align*}
+x_i \approx w_2 = 0 w_1 + 1w_2 + 0 w_3 + 0 w_4
+\end{align*}
+So in this example we would have $ z_i = [0 \quad 1 \quad 0 \quad 0] $. 
+\begin{itemize}
+	\item The \blu{"parts" are the means} from $ k $-means 
+	\item \red{VQ only uses one part} (the "part" from the cluster)
+\end{itemize}
+
+\subsection*{Vector Quantization (VQ) vs PCA}
+Viewing vector quantization as a \blu{latent-factor model}
+\centerfig{0.8}{lat-fac-3}
+Suppose we're doing supervised learning, and the colors are the true labels $ y $: \gre{Then classification would be easy using this $ k $-means basis $ Z $.} \\
+\\
+But it only uses 1 part, it's just memorizing $ k $ points in $ x_i $ space. What we really want is a combination of parts. \\
+\\
+\textbf{PCA} is a generalization that allows continuous $ z_i $:
+\begin{itemize}
+	\item It can have more than one non-zero
+	\item It can use fractional weights and negative weights 
+\end{itemize}
+\centerfig{0.15}{PCA-1}
+\subsection*{PCA Notation (MEMORIZE)}
+\blu{\textbf{PCA}} takes in a matrix $ X $ and an input $ k $, and outputs two matrices:
+\centerfig{0.8}{PCA-2}
+\begin{itemize}
+	\item For \gre{row $ c $ in $ W $ we use the notation $ w_c $}
+	\begin{itemize}
+		\item Each $ w_c $ is a "part" (also called a "\blu{factor}" or "\blu{principal component}")
+	\end{itemize}
+	\item For \gre{row $ i $ of $ Z$, we use notation $ z_i $}
+	\begin{itemize}
+		\item Each $ z_i $ is a set of "part weights" (or "factor loadings" or "features")
+	\end{itemize}
+\item For \red{column $ j $ of $ W $ we use the notation $ w^j $}
+\begin{itemize}
+	\item Index $ j $ of all the $ k $ parts (value of pixel $ j $ in all the different parts)
+\end{itemize}
+\end{itemize}
+With this notation, we can write our approximation of one $ x_{ij} $ as:
+\begin{align*}
+\hat{x}_{ij} &= z_{i1} w_{1j} + z_{i2} w_{2j} + \dots + z_{ik} w_{kj} \\
+&= \sum_{c = 1}^{k} z_{ic} w_{cj} \\
+&= (w^j)^Tz_i \\ &= <w^j, z_i>
+\end{align*}
+
+
+
+
+\end{document}

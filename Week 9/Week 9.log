@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.10.4)  19 MAR 2020 13:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.10.4)  22 MAR 2020 19:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**"week 6.tex"
-(./week 6.tex
+**"Week 9.tex"
+(./Week 9.tex
 LaTeX2e <2018-12-01>
 (/usr/local/texlive/2019basic/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
@@ -1435,8 +1435,8 @@ Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
 \c@blind@pangramcount=\count358
 \c@blind@pangrammax=\count359
 )
-(./week 6.aux)
-\openout1 = `"week 6.aux"'.
+(./Week 9.aux)
+\openout1 = `"Week 9.aux"'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
 LaTeX Font Info:    ... okay on input line 71.
@@ -1467,9 +1467,9 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 71.
 LaTeX Info: Redefining \pageref on input line 71.
 LaTeX Info: Redefining \nameref on input line 71.
- (./week 6.out) (./week 6.out)
+ (./Week 9.out) (./Week 9.out)
 \@outlinefile=\write4
-\openout4 = `"week 6.out"'.
+\openout4 = `"Week 9.out"'.
 
 
 (/usr/local/texlive/2019basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -1548,28 +1548,6 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 73.
 (/usr/local/texlive/2019basic/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<./images/food-allergies.png, id=9, 543.02875pt x 148.555pt>
-File: ./images/food-allergies.png Graphic file (type png)
-<use ./images/food-allergies.png>
-Package pdftex.def Info: ./images/food-allergies.png  used on input line 82.
-(pdftex.def)             Requested size: 352.31625pt x 96.38506pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 83--85
-
- []
-
-<./images/feature-sel1.png, id=11, 360.34625pt x 142.5325pt>
-File: ./images/feature-sel1.png Graphic file (type png)
-<use ./images/feature-sel1.png>
-Package pdftex.def Info: ./images/feature-sel1.png  used on input line 85.
-(pdftex.def)             Requested size: 234.8775pt x 92.90382pt.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 88.
-(/usr/local/texlive/2019basic/texmf-dist/tex/latex/base/omscmr.fd
-File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 88.
-
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
 Make it at least 22.54448pt.
@@ -1578,252 +1556,92 @@ This may cause the page layout to be inconsistent, however.
 
 [1{/usr/local/texlive/2019basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
- <./images/food-allergies.png> <./images/feature-sel1.png>]
-<./images/reg-weight-1.png, id=30, 612.2875pt x 56.21pt>
-File: ./images/reg-weight-1.png Graphic file (type png)
-<use ./images/reg-weight-1.png>
-Package pdftex.def Info: ./images/reg-weight-1.png  used on input line 148.
-(pdftex.def)             Requested size: 352.31625pt x 32.34364pt.
-<./images/reg-weight-2.png, id=31, 727.71875pt x 52.195pt>
-File: ./images/reg-weight-2.png Graphic file (type png)
-<use ./images/reg-weight-2.png>
-Package pdftex.def Info: ./images/reg-weight-2.png  used on input line 150.
-(pdftex.def)             Requested size: 422.77664pt x 30.32408pt.
- [2 <./images/reg-weight-1.png> <./images/reg-weight-2.png>]
-<./images/comp-pen-1.png, id=40, 689.57625pt x 94.3525pt>
-File: ./images/comp-pen-1.png Graphic file (type png)
-<use ./images/comp-pen-1.png>
-Package pdftex.def Info: ./images/comp-pen-1.png  used on input line 192.
-(pdftex.def)             Requested size: 352.31625pt x 48.20694pt.
-<./images/L0-norm-1.png, id=41, 543.02875pt x 195.73125pt>
-File: ./images/L0-norm-1.png Graphic file (type png)
-<use ./images/L0-norm-1.png>
-Package pdftex.def Info: ./images/L0-norm-1.png  used on input line 205.
-(pdftex.def)             Requested size: 305.33789pt x 110.05972pt.
- [3 <./images/comp-pen-1.png>]
-<./images/L0-norm-2.png, id=53, 437.635pt x 126.4725pt>
-File: ./images/L0-norm-2.png Graphic file (type png)
-<use ./images/L0-norm-2.png>
-Package pdftex.def Info: ./images/L0-norm-2.png  used on input line 211.
-(pdftex.def)             Requested size: 234.8775pt x 67.87729pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 218--221
+]
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 88--91
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 230--233
-
- []
-
-[4 <./images/L0-norm-1.png> <./images/L0-norm-2.png>]
-<./images/summ-1.png, id=66, 313.17pt x 109.40875pt>
-File: ./images/summ-1.png Graphic file (type png)
-<use ./images/summ-1.png>
-Package pdftex.def Info: ./images/summ-1.png  used on input line 261.
-(pdftex.def)             Requested size: 187.89914pt x 65.64574pt.
- [5 <./images/summ-1.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 322--325
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 335--338
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 341--344
-
- []
-
-<./images/comp-pen-2.png, id=82, 361.35pt x 253.94875pt>
-File: ./images/comp-pen-2.png Graphic file (type png)
-<use ./images/comp-pen-2.png>
-Package pdftex.def Info: ./images/comp-pen-2.png  used on input line 348.
-(pdftex.def)             Requested size: 234.8775pt x 165.06859pt.
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 349--352
-
- []
-
-<./images/L2-reg-1.png, id=93, 673.51625pt x 69.25874pt>
-File: ./images/L2-reg-1.png Graphic file (type png)
-<use ./images/L2-reg-1.png>
-Package pdftex.def Info: ./images/L2-reg-1.png  used on input line 363.
-(pdftex.def)             Requested size: 352.31625pt x 36.22926pt.
-[7 <./images/comp-pen-2.png> <./images/L2-reg-1.png>]
-<./images/L2-reg-ex1.png, id=105, 743.77875pt x 233.87375pt>
-File: ./images/L2-reg-ex1.png Graphic file (type png)
-<use ./images/L2-reg-ex1.png>
-Package pdftex.def Info: ./images/L2-reg-ex1.png  used on input line 388.
-(pdftex.def)             Requested size: 422.77664pt x 132.94183pt.
-
-
-LaTeX Warning: Command \textendash invalid in math mode on input line 390.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 389--392
-
- []
-
-<./images/Reg-path.png, id=106, 485.815pt x 410.53375pt>
-File: ./images/Reg-path.png Graphic file (type png)
-<use ./images/Reg-path.png>
-Package pdftex.def Info: ./images/Reg-path.png  used on input line 398.
-(pdftex.def)             Requested size: 234.8775pt x 198.47594pt.
-[8 <./images/L2-reg-ex1.png> <./images/Reg-path.png>]
+<./images/lat-fac-1.png, id=26, 329.23pt x 82.3075pt>
+File: ./images/lat-fac-1.png Graphic file (type png)
+<use ./images/lat-fac-1.png>
+Package pdftex.def Info: ./images/lat-fac-1.png  used on input line 91.
+(pdftex.def)             Requested size: 187.89914pt x 46.97603pt.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 94.
+(/usr/local/texlive/2019basic/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 94.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 433.
+(mdframed)              on input line 102.
+<./images/lat-fac-2.png, id=28, 522.95375pt x 176.66pt>
+File: ./images/lat-fac-2.png Graphic file (type png)
+<use ./images/lat-fac-2.png>
+Package pdftex.def Info: ./images/lat-fac-2.png  used on input line 108.
+(pdftex.def)             Requested size: 359.16539pt x 121.33214pt.
+ [3 <./images/lat-fac-1.png> <./images/lat-fac-2.png>]
+<./images/lat-fac-3.png, id=44, 550.055pt x 150.5625pt>
+File: ./images/lat-fac-3.png Graphic file (type png)
+<use ./images/lat-fac-3.png>
+Package pdftex.def Info: ./images/lat-fac-3.png  used on input line 140.
+(pdftex.def)             Requested size: 375.80544pt x 102.87047pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 433--436
-
- []
-
-<./images/diff-scales-1.png, id=116, 712.6625pt x 316.18124pt>
-File: ./images/diff-scales-1.png Graphic file (type png)
-<use ./images/diff-scales-1.png>
-Package pdftex.def Info: ./images/diff-scales-1.png  used on input line 448.
-(pdftex.def)             Requested size: 281.85587pt x 125.04701pt.
-[9 <./images/diff-scales-1.png>]
-<./images/stand-1.png, id=134, 501.875pt x 219.82124pt>
-File: ./images/stand-1.png Graphic file (type png)
-<use ./images/stand-1.png>
-Package pdftex.def Info: ./images/stand-1.png  used on input line 464.
-(pdftex.def)             Requested size: 234.8775pt x 102.87659pt.
-<./images/stand-2.png, id=135, 357.335pt x 62.2325pt>
-File: ./images/stand-2.png Graphic file (type png)
-<use ./images/stand-2.png>
-Package pdftex.def Info: ./images/stand-2.png  used on input line 466.
-(pdftex.def)             Requested size: 234.8775pt x 40.90549pt.
-<./images/stand-3.png, id=136, 304.13625pt x 80.3pt>
-File: ./images/stand-3.png Graphic file (type png)
-<use ./images/stand-3.png>
-Package pdftex.def Info: ./images/stand-3.png  used on input line 485.
-(pdftex.def)             Requested size: 234.8775pt x 62.01497pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 486--491
+Underfull \hbox (badness 10000) in paragraph at lines 141--147
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 486--491
+Underfull \hbox (badness 10000) in paragraph at lines 141--147
 
  []
 
-[10 <./images/stand-1.png> <./images/stand-2.png> <./images/stand-3.png>]
-<./images/stand-4.png, id=146, 350.30875pt x 74.2775pt>
-File: ./images/stand-4.png Graphic file (type png)
-<use ./images/stand-4.png>
-Package pdftex.def Info: ./images/stand-4.png  used on input line 491.
-(pdftex.def)             Requested size: 234.8775pt x 49.80305pt.
+<./images/PCA-1.png, id=45, 147.55125pt x 144.54pt>
+File: ./images/PCA-1.png Graphic file (type png)
+<use ./images/PCA-1.png>
+Package pdftex.def Info: ./images/PCA-1.png  used on input line 150.
+(pdftex.def)             Requested size: 70.46037pt x 69.02332pt.
+<./images/PCA-2.png, id=46, 601.24625pt x 120.45pt>
+File: ./images/PCA-2.png Graphic file (type png)
+<use ./images/PCA-2.png>
+Package pdftex.def Info: ./images/PCA-2.png  used on input line 153.
+(pdftex.def)             Requested size: 375.80544pt x 75.2884pt.
+[4 <./images/lat-fac-3.png> <./images/PCA-1.png> <./images/PCA-2.png>] [5]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 178.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 178.
 
-[11 <./images/stand-4.png>]
-<./images/param-1.png, id=153, 1107.13625pt x 167.62625pt>
-File: ./images/param-1.png Graphic file (type png)
-<use ./images/param-1.png>
-Package pdftex.def Info: ./images/param-1.png  used on input line 501.
-(pdftex.def)             Requested size: 375.80544pt x 56.89752pt.
-<./images/gauss-1.png, id=154, 1178.4025pt x 469.755pt>
-File: ./images/gauss-1.png Graphic file (type png)
-<use ./images/gauss-1.png>
-Package pdftex.def Info: ./images/gauss-1.png  used on input line 518.
-(pdftex.def)             Requested size: 422.77664pt x 168.53107pt.
-<./images/poly-fit-1.png, id=155, 993.7125pt x 322.20375pt>
-File: ./images/poly-fit-1.png Graphic file (type png)
-<use ./images/poly-fit-1.png>
-Package pdftex.def Info: ./images/poly-fit-1.png  used on input line 528.
-(pdftex.def)             Requested size: 375.80544pt x 121.85364pt.
- [12 <./images/param-1.png> <./images/gauss-1.png>]
-<./images/gauss-fit-1.png, id=166, 1069.9975pt x 208.78pt>
-File: ./images/gauss-fit-1.png Graphic file (type png)
-<use ./images/gauss-fit-1.png>
-Package pdftex.def Info: ./images/gauss-fit-1.png  used on input line 530.
-(pdftex.def)             Requested size: 375.80544pt x 73.32893pt.
-<./images/gauss-2.png, id=167, 1273.75874pt x 178.6675pt>
-File: ./images/gauss-2.png Graphic file (type png)
-<use ./images/gauss-2.png>
-Package pdftex.def Info: ./images/gauss-2.png  used on input line 553.
-(pdftex.def)             Requested size: 469.75502pt x 65.89056pt.
-
-Overfull \hbox (25.00003pt too wide) in paragraph at lines 553--553
- [] 
- []
-
-[13 <./images/poly-fit-1.png> <./images/gauss-fit-1.png> <./images/gauss-2.png>
-]
-<./images/gauss-3.png, id=187, 376.40625pt x 292.09125pt>
-File: ./images/gauss-3.png Graphic file (type png)
-<use ./images/gauss-3.png>
-Package pdftex.def Info: ./images/gauss-3.png  used on input line 562.
-(pdftex.def)             Requested size: 140.92793pt x 109.3601pt.
-<./images/gauss-4.png, id=188, 1371.1225pt x 538.01pt>
-File: ./images/gauss-4.png Graphic file (type png)
-<use ./images/gauss-4.png>
-Package pdftex.def Info: ./images/gauss-4.png  used on input line 564.
-(pdftex.def)             Requested size: 469.75502pt x 184.32477pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 574--577
-
- []
-
-<./images/bias-lin-basis.png, id=189, 426.59375pt x 194.7275pt>
-File: ./images/bias-lin-basis.png Graphic file (type png)
-<use ./images/bias-lin-basis.png>
-Package pdftex.def Info: ./images/bias-lin-basis.png  used on input line 577.
-(pdftex.def)             Requested size: 281.85587pt x 128.66612pt.
-[14 <./images/gauss-3.png> <./images/gauss-4.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 591--596
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 591--596
-
- []
-
-[15 <./images/bias-lin-basis.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 607.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 607.
- (./week 6.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 607.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 607.
-Package rerunfilecheck Info: File `"week 6".out' has not changed.
+(./Week 9.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 178.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 178.
+Package rerunfilecheck Info: File `"Week 9".out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 607.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 178.
  ) 
 Here is how much of TeX's memory you used:
- 32064 strings out of 494060
- 588932 string characters out of 6163035
+ 31621 strings out of 494060
+ 583689 string characters out of 6163035
  685891 words of memory out of 5000000
- 35248 multiletter control sequences out of 15000+600000
- 539919 words of font info for 50 fonts, out of 8000000 for 9000
+ 34902 multiletter control sequences out of 15000+600000
+ 538861 words of font info for 47 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 64i,16n,77p,937b,1094s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 64i,21n,77p,937b,538s stack positions out of 5000i,500n,10000p,200000b,80000s
  </Users/jdodinh/Library/texlive/2019basic/texmf-var/fonts/pk/ljfour/public/m
-athabx/matha10.600pk> </Users/jdodinh/Library/texlive/2019basic/texmf-var/fonts
-/pk/ljfour/public/mathabx/mathx10.600pk></usr/local/texlive/2019basic/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2019basic/texmf
--dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019basic/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/local/texlive/2019b
-asic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2
-019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texli
-ve/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/te
-xlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local
-/texlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/lo
-cal/texlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/
-local/texlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></
-usr/local/texlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pf
-b></usr/local/texlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7
-.pfb></usr/local/texlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-ti10.pfb></usr/local/texlive/2019basic/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmtt10.pfb></usr/local/texlive/2019basic/texmf-dist/fonts/type1/public/amsfon
-ts/symbols/msbm10.pfb>
-Output written on "week 6.pdf" (15 pages, 2107000 bytes).
+athabx/mathx10.600pk></usr/local/texlive/2019basic/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2019basic/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019basic/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2019basic/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2019basic/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2019basic/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2019basic/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019basic/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2019basic/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2019bas
+ic/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on "Week 9.pdf" (5 pages, 339298 bytes).
 PDF statistics:
- 302 PDF objects out of 1000 (max. 8388607)
- 204 compressed objects within 3 object streams
- 87 named destinations out of 1000 (max. 500000)
- 138 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 109 PDF objects out of 1000 (max. 8388607)
+ 73 compressed objects within 1 object stream
+ 13 named destinations out of 1000 (max. 500000)
+ 38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

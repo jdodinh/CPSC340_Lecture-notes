@@ -10,18 +10,34 @@
 \usepackage{hyperref} 				% Add a link to your document
 \usepackage{graphicx}				% Add pictures to your document
 \graphicspath{ {./images/} }	% image directory
+
+% Typewriter settings for code
 \usepackage{listings} 				% Source code formatting and highlighting
 \lstset{basicstyle=\ttfamily}		%Typewriter font for code writing
+
+
+\usepackage{enumitem}
+
+% Margins
 \usepackage{geometry}
 \geometry{margin=1in}
-\usepackage{enumitem}
+
+
 \usepackage{float}
-%\floatstyle{boxed}
 \restylefloat{figure}
 \usepackage{mathabx}
 \usepackage{fancyhdr}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{scrextend}
+
+% Siderules for digressions/examples
+\usepackage{mdframed}
+\newmdenv[
+topline=false,
+bottomline=false,
+skipabove=\topsep,
+skipbelow=\topsep
+]{siderules}
 
 % Colors
 \definecolor{blu}{rgb}{0,0,1}
@@ -32,23 +48,23 @@
 \def\red#1{{\color{red}#1}}
 \def\norm#1{\|#1\|}
 
-\theoremstyle{definition}
-\newtheorem{definition}{Def}
 
+% Headers
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\bf CPSC 340 \\ Week 6 }
 \rhead{\bf Jeremi Do Dinh \\ 61985628}
 \rfoot{Page \thepage}
 
-
-
-\usepackage{tikz}						% Graph drawing tools
+% Graph drawing tools
+\usepackage{tikz}						
 \usetikzlibrary {positioning}
 
 \usepackage{breqn}
 \usepackage{multicol} 				% Multiple column functionality
 \usepackage{blindtext}
+
+% Figure shortcut
 \newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
 
 
@@ -401,6 +417,191 @@ And:
 \end{itemize}
 But unlike $ X^TX $, the matrix $ (X^TX+ \lambda I) $ is always invertible. Then we multiply by its inverse to get $ w = (X^TX + \lambda I )^{-1} (X^Ty) $
 
+\subsection*{Gradient Descent for L2-Regularized Least Squares}
+The L2-regularized least squares objective and gradient is:
+\begin{align*}
+f(w) &= \frac{1}{2} \norm{Xw - y} ^ 2 + \gre{\frac{\lambda}{2} \norm{w} ^ 2} \\
+\nabla f(w) &= X^T (Xw - y) \gre{+ \lambda w}
+\end{align*}
+The gradient descent iterations for L2-regularized least squares is:
+\begin{align*}
+w ^ {t+1} &= w^t - \alpha ^ t (\underbrace{X^T (Xw^t - y) \gre{+ \lambda w^t}}_{\nabla f(w^t)})
+\end{align*}
+Here the cost of a gradient descent iteration is still $ O(nd) $. We can also show that the \gre{number of iterations decreases as $ \lambda $ increases} (which is not an obvious proof).
+
+\begin{siderules}
+	\textbf{Digression: Why use L2-Regularization?} \\ \\
+	In general it "Almost always decreases the test error". However here are 6 more reasons:
+	\begin{enumerate}
+		\item Solution to $ w $ is \gre{unique}.
+		\item $ X^TX $ \gre{does not have to be invertible}
+		\item \gre{Less sensitive} in changes to $ X $ or $ y $. 
+		\item Gradient descent \gre{converges faster} (bigger $\lambda$ means fewer iterations).
+		\item \textsl{Stein's paradox}: if $ d \geq 3 $, 'shrinking' \gre{moves us closer to 'true' $ w $}.
+		\item Worst case: just set $\lambda$ small and get the same performance.
+	\end{enumerate}
+\end{siderules}
+
+\subsection*{Standardizing Features}
+\subsubsection*{Features with Different Scales}
+Let's consider continuous features with different scales:
+\centerfig{0.6}{diff-scales-1}
+Should we convert them to a certain normalized/standardized unit?
+\begin{itemize}
+	\item It \gre{doesn't matter for decision trees or Naïve Bayes}, since they only look at one feature at a time.
+	\item It also \gre{doesn't matter for Least squares}, since unit conversion doesn't affect the model. 
+\end{itemize}
+\textbf{\textit{\underline{However}:}}
+\begin{itemize}
+	\item It \red{matters for K-Nearest Neighbors}, since distance will be affected more by large features than small features
+	\item It \red{matters for regularized least squares}, since penalizing $ w_j^2 $ means different things if features $ j $ are on different scales.
+\end{itemize}
+Consequently it is common to \blu{standardize continuous features}:
+\begin{itemize}
+	\item \texttt{For each feature}:
+	\begin{itemize}
+		\item \texttt{Compute the mean and standard deviation}:
+		\centerfig{0.5}{stand-1}
+		\item \texttt{Subtract mean and divide by standard deviation (“z-score”)}
+				\centerfig{0.5}{stand-2}
+	\end{itemize}
+\item Now changes in in $ w_j $ have the same effect for any feature $ j $
+\end{itemize}
+\textbf{How should we standardize test data?}
+\begin{itemize}
+	\item \red{The wrong approach is} to use the mean and standard deviation of the test data
+	\item The training and test mean and standard deviation might be very different. 
+	\item The \gre{right approach is to use the mean and standard deviation of the training data}
+\end{itemize}
+\textbf{If we're doing 10-fold cross validation:}
+\begin{itemize}
+	\item Compute $ \mu_j $ and $ \sigma_j $ based on the 9 training folds (e.g.: average over 9/10s of the data)
+	\item Standardize the remaining "validation" fold with this training $ \mu_j $ and $ \sigma_j $
+	\item Re-standardize for the different folds
+\end{itemize}
+
+\subsubsection*{Standardizing Target}
+In regression we sometimes \gre{standardize the targets $ y_i $.} This puts the targets on the same standard scale as the standardized features:
+\centerfig{0.5}{stand-3}
+With a standardized target, setting $ w = 0 $ \gre{predicts average $ y_i $}, which means that higher regularization lets us predict closer to the average value. \\
+\\
+But it is important to remember to \red{\textbf{standardize test data with the training sets!}} \\
+\\
+Other common approaches to transformations are the use of exponents or logarithms:
+\centerfig{0.5}{stand-4}
+
+\newpage
+
+\section*{Lecture XVIII - More Regularization}
+\textbf{February 14th, 2020} \\
+\url{https://www.cs.ubc.ca/~fwood/CS340/lectures/L18.pdf}
+
+\subsection*{ Parametric vs. Non-Parametric Transforms}
+So far we've been using linear models with \blu{polynomial bases}
+\centerfig{0.80}{param-1}
+But polynomials are not the only possible bases:
+\begin{itemize}
+	\item Exponentials, logarithmis, trigonometric functions, etc
+	\item The \gre{right basis will vastly improve performance}
+	\item If we use the wrong basis, the accuracy will be limited even with a large amount of data
+	\item But the \red{right bases might not be obvious!}
+\end{itemize}
+An alternative is \textbf{non-parametric bases:}
+\begin{itemize}
+	\item The size of the basis (number of features) \gre{grown with $ n $}
+	\item Model gets more complicated as you get more data
+	\item It can model complicated functions where you don't know the right basis (\textsl{with enough data})
+	\item A classic example is \textit{\textbf{\blu{Gaussian RBF's}}} ("Gaussian" = "Normal Distribution")
+\end{itemize}
+
+\subsection*{Gaussian RBF's: A sum of "bumps"}
+\centerfig{0.9}{gauss-1}
+Gaussian RBFs are \blu{universal approximators} (compact subsets of $ \mathbb
+{R}^d $):
+\begin{itemize}
+	\item Enough bumps can \gre{approximate any continuous function} to an arbitrary precision
+	\item This means we can \gre{achieve optimal test error} as $ n $ goes to infinity
+\end{itemize}
+\textbf{Comparison}:
+\begin{itemize}
+	\item \textit{Polynomial Fit:}
+	\centerfig{0.8}{poly-fit-1}
+	\item \textit{Constructing a function from bumps ("smooth histogram")}
+	\centerfig{0.8}{gauss-fit-1}
+\end{itemize}
+
+\subsubsection*{Gaussian RBFs parameters}
+Some obvious \textbf{questions} are:
+\begin{enumerate}
+	\item How many bumps should we use?
+	\item Should the bumps be centered?
+	\item How far up should the bumps go?
+	\item How wide should the bumps be?
+\end{enumerate}
+The usual \textbf{answers} are:
+\begin{enumerate}
+	\item We \gre{use $ n $ bumps} (non-parametric basis)
+	\item Each bump is \gre{centered on one training example $ x_i $}
+	\item Fitting regression weights \gre{$ w $ gives us the heights} (and signs)
+	\item The \gre{width is a hyper parameter} (narrow bumps = complicated model).
+\end{enumerate}
+
+\subsubsection*{Gaussian RBFs: Formal Details}
+What is a \blu{\textbf{radial basis functions}} (RBFs)?
+\begin{itemize}[label=-]
+	\item A set of non-parametric bases that \gre{depend on distances to training points}
+	\centerfig{1}{gauss-2}
+	\item We have $ n $ features with \gre{feature $ j $ depending on its distance to example $ i $}
+	\item The most common $ g $ is the Gaussian RBF:
+	\begin{align*}
+	g(\varepsilon) &= \exp (- \frac{\varepsilon^2}{2 \sigma ^2})
+	\end{align*}
+	\begin{itemize}
+		\item The variance $ \sigma^2 $ is a hyper-parameter controlling the "width". This affects fundamental trade-off (and we set it using a validation set).
+	\end{itemize}
+\centerfig{0.3}{gauss-3}
+\end{itemize} 
+\centerfig{1}{gauss-4}
+
+\subsubsection*{Pseudocode}
+Here is the pseudo code for construction RBFs given data $ X $ and a hyper-parameter $ \sigma $
+\begin{lstlisting}[tabsize=3]
+	Z = zcros(n,n)
+	for i1 in 1:n :
+		for i2 in 1:n :
+			Z[i1, i2] = exp(-norm(X[i1,:] - X[i2,:])^2 / (2 * sig^2))
+\end{lstlisting}
+With the test data $ \tilde{X}$: form $ \tilde{Z} $ based on distances to training examples. \\
+\\
+And if we wish to do least squares for different values of the hyper-parameter $ \sigma $, then we could add a bias, and a linear basis:
+\centerfig{0.6}{bias-lin-basis}
+This reverts to linear regression, instead of 0 away from the data.
+
+\subsection*{ RBFs, Regularization and Validation}
+We make predictions using rbf's as follows:
+\begin{align*}
+\hat{y}_i &= w_1 \exp\left(- \frac{\norm{x_i - x_1}^2}{2 \sigma ^2}\right) + w_2 \exp\left(- \frac{\norm{x_i - x_2}^2}{2 \sigma ^2}\right) + \dots + w_n \exp\left(- \frac{\norm{x_i - x_n}^2}{2 \sigma ^2}\right) \\
+&= \sum_{j = 1}^{n} w_j \exp\left(- \frac{\norm{x_i - x_j}^2}{2 \sigma ^2}\right)
+\end{align*}
+Here:
+\begin{itemize}
+	\item The flexible basis can \gre{model any continuous function}.
+	\item But with $ n $ data points RBFs \red{have $ n $ basis functions}.
+\end{itemize}
+How can we avoid over-fitting with this huge number of features?\\
+\\
+\textbf{We \blu{regularize} $ w $ and use \blu{validation error} to choose \gre{$ \sigma $ and $ \lambda $}} \\ \\
+This turns out to be a model that is hard to beat:
+\begin{itemize}
+	\item \gre{RBF basis with L2-regularization and cross validation to choose $ \sigma $ and $ \lambda $}
+	\item Flexible non-parametric basis, magic of regularization, and tuning for test error.
+\end{itemize}
+\begin{lstlisting}[tabsize=3]
+	for each value of sig and lamd:
+		Compute Z on training data (and sig)
+		Compute best v: v = (Z.T@Z + lamd*I)^(-1) @ Z.T@y
+		Compute Z_tilde on validation data (using train data distances)
+\end{lstlisting}
 
 
 \end{document}
